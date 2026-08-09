@@ -53,7 +53,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -63,6 +62,11 @@ jobs:
           role-to-assume: arn:aws:iam::759416136172:role/OIDC-ROLE
           aws-region: us-east-1
 
-      - name: Verify AWS Identity
+      - name: Check AWS Identity
         run: aws sts get-caller-identity
 
+      - name: Check EC2
+        run: |
+          aws ec2 describe-instances \
+            --instance-ids i-0de3cde3b22560d01 \
+            --region us-east-1
