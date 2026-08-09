@@ -1,35 +1,65 @@
-name: Terraform Deploy
+# name: Terraform Deploy
+
+# on:
+#   # push:
+#   #   branches: [ main ]
+#   workflow_dispatch:   # ✅ Manual trigger only
+
+
+# jobs:
+#   terraform:
+#     runs-on: ubuntu-latest
+
+#     env:
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       AWS_DEFAULT_REGION: us-east-1 # change if needed
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v3
+
+#       - name: Terraform Init
+#         run: terraform init
+
+#       - name: Terraform Validate
+#         run: terraform validate
+
+#       - name: Terraform Plan
+#         run: terraform plan -out=tfplan
+
+#       - name: Terraform Apply
+#         run: terraform apply -auto-approve tfplan
+
+
+
+
+name: Terraform Deployment
 
 on:
-  # push:
-  #   branches: [ main ]
-  workflow_dispatch:   # ✅ Manual trigger only
+  push:
+    branches:
+      - main
 
+# Required for GitHub OIDC
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  terraform:
+  deploy:
     runs-on: ubuntu-latest
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: us-east-1 # change if needed
-
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::759416136172:role/OIDC-ROLE
+          aws-region: us-east-1
 
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
